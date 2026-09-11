@@ -14,12 +14,9 @@ The analysis was designed to:
 
 ## Data analyzed
 
-The case study covered Q1–Q2 2024 and included:
+The case study uses anonymized operational data from two reporting periods across multiple communities, including longitudinal weight-monitoring records and fall/incident records.
 
-- **Weights:** 2,108 measurement events across 294 residents and 30 communities
-- **Falls/incidents:** 968 events across 295 residents and 30 communities
-
-Only aggregated results and analysis code are included here. Source data are omitted.
+Only aggregated results, analysis code, and sanitized presentation materials are included here. Source data are omitted.
 
 ## Analytical approach
 
@@ -28,9 +25,9 @@ Only aggregated results and analysis code are included here. Source data are omi
 The workflow applies explicit business rules before calculating benchmarks, including:
 
 - treating each valid weight record as one measurement per resident per day;
-- excluding implausible weights below 70 lbs or above 450 lbs;
+- excluding clinically implausible weight values;
 - retaining the most recent measurement when multiple weights occur on the same day;
-- identifying clinically meaningful weight-change events using ±5% and ±10% thresholds across defined time windows;
+- identifying clinically meaningful weight-change events using defined threshold rules across defined time windows;
 - collapsing incident records to one event per resident/community/timestamp;
 - isolating fall-related events with a standardized fall flag; and
 - calculating event intervals at the resident level before aggregation.
@@ -40,19 +37,19 @@ The workflow applies explicit business rules before calculating benchmarks, incl
 Weight-monitoring benchmarks include:
 
 - percent of residents with at least one weight-change event;
-- weight-change events per 100 residents;
+- weight-change events per standardized resident count;
 - median days between weigh-ins; and
-- percent of residents with more than 30 days between weigh-ins.
+- percent of residents exceeding the expected monitoring interval.
 
 Fall-related benchmarks include:
 
-- percent of residents with a repeat fall within 30 days;
-- falls per 100 residents; and
+- percent of residents with a repeat fall within a defined follow-up window;
+- falls per standardized resident count; and
 - median days between falls.
 
 ### 3. Compare communities and reporting periods
 
-The analysis generates community-level summaries and Q1-to-Q2 comparisons to identify changes in monitoring cadence, event frequency, repeat-fall risk, and other patterns that may warrant follow-up.
+The analysis generates community-level summaries and reporting-period comparisons to identify changes in monitoring cadence, event frequency, repeat-fall risk, and other patterns that may warrant follow-up.
 
 ### 4. Translate findings into decision support
 
@@ -72,7 +69,8 @@ healthcare-operations-benchmarking/
 │   ├── loader.py
 │   └── weight_preprocessing.py
 ├── case-study/
-│   └── Healthcare_Operations_Benchmarking_Case_Study.pptx
+│   ├── Healthcare_Operations_Benchmarking_Case_Study.pptx
+│   └── Healthcare_Operations_Benchmarking_Case_Study.pdf
 ├── data/
 │   ├── README.md
 │   ├── raw/
@@ -97,7 +95,7 @@ Business-rule application
       ↓
 Community benchmarks
       ↓
-Quarter-over-quarter comparisons
+Period-over-period comparisons
       ↓
 Validation outputs + visualizations
       ↓
@@ -120,7 +118,7 @@ Place the source Excel workbook in:
 data/raw/
 ```
 
-The workflow expects a workbook with `Weight` and `Incidents` sheets. Then run:
+The workflow expects a workbook with weight and incident data sheets. Then run:
 
 ```bash
 python analysis/benchmark_main.py
@@ -138,11 +136,11 @@ Outputs are written to `data/processed/`.
 
 ## Selected findings
 
-The analysis found evidence of changing monitoring and incident patterns across communities between Q1 and Q2, including longer weigh-in intervals in many communities, increases in weight-change event frequency, and meaningful variation in repeat-fall patterns. The case study presentation documents the benchmark definitions, findings, recommendations, and proposed next analyses.
+The analysis found evidence of changing monitoring and incident patterns across communities, including longer weigh-in intervals in many communities, increases in weight-change event frequency, and meaningful variation in repeat-fall patterns. The case study presentation documents the benchmark definitions, findings, recommendations, and proposed next analyses.
 
 ## Case study presentation
 
-See [`case-study/Healthcare_Operations_Benchmarking_Case_Study.pptx`](case-study/Healthcare_Operations_Benchmarking_Case_Study.pptx) for the full presentation.
+See the sanitized presentation files in [`case-study/`](case-study/) for the full case study.
 
 ## Privacy and use
 
