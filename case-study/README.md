@@ -2,7 +2,7 @@
 
 This folder contains the sanitized portfolio presentation for the Healthcare Operations Benchmarking case study.
 
-Files to include:
+Files include:
 
 - `Healthcare_Operations_Benchmarking_Case_Study.pptx`
 - `Healthcare_Operations_Benchmarking_Case_Study.pdf`
