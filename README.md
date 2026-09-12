@@ -4,6 +4,10 @@ A healthcare analytics case study demonstrating how operational event data can b
 
 > **Portfolio note:** This work was originally completed as a time-bounded analytics exercise. It is shared to demonstrate analytical approach, data-processing logic, quality checks, benchmark design, and communication of findings. No raw resident-level data are included in this repository.
 
+## Case study
+
+For a concise portfolio review, open the [`Healthcare Operations Benchmarking Case Study (PDF)`](case-study/Healthcare_Operations_Benchmarking_Case_Study.pdf). The [`case-study/`](case-study/) folder also contains the PowerPoint version and supporting file information.
+
 ## Objective
 
 The analysis was designed to:
@@ -137,10 +141,6 @@ Outputs are written to `data/processed/`.
 ## Selected findings
 
 The analysis found evidence of changing monitoring and incident patterns across communities, including longer weigh-in intervals in many communities, increases in weight-change event frequency, and meaningful variation in repeat-fall patterns. The case study presentation documents the benchmark definitions, findings, recommendations, and proposed next analyses.
-
-## Case study presentation
-
-See the sanitized presentation files in [`case-study/`](case-study/) for the full case study.
 
 ## Privacy and use
 
