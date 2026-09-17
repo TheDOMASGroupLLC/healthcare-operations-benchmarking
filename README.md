@@ -12,9 +12,15 @@ This case study shows how DOMAS can take operational data that require substanti
 
 It is best understood as an **analytics and decision-support example**, distinct from the custom data tool example in the Enrollment & Outpatient Visit Processing repository.
 
-## Case study
+## Portfolio materials
 
-For a concise portfolio review, open the [`Healthcare Operations Benchmarking Case Study (PDF)`](case-study/Healthcare_Operations_Benchmarking_Case_Study.pdf). The [`case-study/`](case-study/) folder also contains the PowerPoint version and supporting file information.
+Start with the one-page summary, then open the full case study for benchmark definitions, sanitized visuals, recommendations, and analytic follow-up opportunities.
+
+- [`One-page summary (PDF)`](case-study/Healthcare_Operations_Benchmarking_One_Page_Summary.pdf)
+- [`Full case study (PDF)`](case-study/Healthcare_Operations_Benchmarking_Case_Study.pdf)
+- [`Presentation (PowerPoint)`](case-study/Healthcare_Operations_Benchmarking_Case_Study.pptx)
+
+The [`case-study/`](case-study/) folder contains the complete set of public portfolio materials.
 
 ## Objective
 
@@ -81,8 +87,10 @@ healthcare-operations-benchmarking/
 │   ├── loader.py
 │   └── weight_preprocessing.py
 ├── case-study/
+│   ├── Healthcare_Operations_Benchmarking_One_Page_Summary.pdf
+│   ├── Healthcare_Operations_Benchmarking_Case_Study.pdf
 │   ├── Healthcare_Operations_Benchmarking_Case_Study.pptx
-│   └── Healthcare_Operations_Benchmarking_Case_Study.pdf
+│   └── README.md
 ├── data/
 │   ├── README.md
 │   ├── raw/
