@@ -1,8 +1,16 @@
 # Healthcare Operations Benchmarking & Risk Monitoring
 
+## Analytics & Decision Support Case Study
+
 A healthcare analytics case study demonstrating how operational event data can be cleaned, standardized, benchmarked, and translated into decision-support insights across multiple communities.
 
-> **Portfolio note:** This work was originally completed as a time-bounded analytics exercise. It is shared to demonstrate analytical approach, data-processing logic, quality checks, benchmark design, and communication of findings. No raw resident-level data are included in this repository.
+> **Portfolio note:** This work was originally completed as a time-bounded analytics exercise. It is shared to demonstrate DOMAS's approach to data validation, explicit business rules, benchmark design, risk monitoring, and communication of findings. No raw resident-level data are included.
+
+## What this example demonstrates for clients
+
+This case study shows how DOMAS can take operational data that require substantial validation and rule definition, create consistent measures across reporting periods, identify patterns that warrant follow-up, and translate the results into practical decision support.
+
+It is best understood as an **analytics and decision-support example**, distinct from the custom data tool example in the Enrollment & Outpatient Visit Processing repository.
 
 ## Case study
 
