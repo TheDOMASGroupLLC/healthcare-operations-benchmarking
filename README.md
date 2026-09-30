@@ -74,7 +74,7 @@ pip install -r requirements.txt
 python analysis/benchmark_main.py
 ```
 
-On Windows, activate with `.venv\\Scripts\\activate`.
+On Windows, activate with `.venv\Scripts\activate`.
 
 Outputs are written to:
 
@@ -88,7 +88,6 @@ Supporting materials are available in `case-study/`:
 
 - `Healthcare_Operations_Benchmarking_One_Page_Summary.pdf`
 - `Healthcare_Operations_Benchmarking_Case_Study.pdf`
-- `Healthcare_Operations_Benchmarking_Case_Study.pptx`
 
 ## Notes
 
