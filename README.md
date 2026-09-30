@@ -38,10 +38,10 @@ Raw resident-level data are not included in this repository.
 Weight records are normalized before benchmark calculation. The workflow:
 
 - converts recorded values to a consistent long format;
-- keeps one weight per resident per day;
+- keeps the most recent weight per resident per day;
 - limits weights to the configured valid range;
 - calculates measurement intervals and percent change;
-- identifies threshold events using prior observations within the configured time windows; and
+- identifies threshold events at ±5% within 30 days or ±10% within 180 days using prior observations; and
 - creates a single event signal for downstream benchmarking.
 
 ## Incident processing
