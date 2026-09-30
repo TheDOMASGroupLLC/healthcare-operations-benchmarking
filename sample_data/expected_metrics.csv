@@ -1,0 +1,9 @@
+metric,expected_value,notes
+total_falls,9,After same-timestamp type rows are grouped into single incidents
+unique_incident_residents,4,Includes residents appearing in the incident data
+falls_per_100_residents,225.0,9 falls / 4 residents * 100
+repeat_faller_count,2,I001 and I003 have repeat falls within 30 days
+pct_repeat_fallers_lt30,50.0,2 of 4 fallers
+median_days_between_falls,52.0,Median of resident-level medians
+weight_event_rows,5,Known threshold-crossing observations after same-day deduplication
+latest_same_day_weight_W001_2026-04-10,180.0,The 16:00 weight is retained over the 08:00 weight

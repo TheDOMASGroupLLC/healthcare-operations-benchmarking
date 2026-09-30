@@ -17,6 +17,7 @@ The workflow standardizes source records, applies defined event rules, calculate
 analysis/
 case-study/
 data/
+sample_data/
 requirements.txt
 README.md
 ```
@@ -65,6 +66,18 @@ Fall metrics include:
 - falls per 100 residents;
 - median days between falls.
 
+## Synthetic sample data
+
+A fully fictional two-quarter workbook is included in `sample_data/` so the analysis can be run without original project data.
+
+To run the end-to-end sample and verify known metrics and chart outputs:
+
+```bash
+python sample_data/verify_sample.py
+```
+
+See `sample_data/README.md` for the cases represented in the workbook and manual-run instructions.
+
 ## Running
 
 ```bash
@@ -93,4 +106,4 @@ Supporting materials are available in `case-study/`:
 
 The runnable pipeline implements the weight and fall benchmark measures described above. The accompanying case study also discusses exploratory analytic extensions that are not part of the public pipeline.
 
-No raw resident-level or personally identifiable data are included. This repository documents an analytics workflow and is not clinical guidance.
+No real resident-level or personally identifiable data are included. The records in `sample_data/` are synthetic and fictional. This repository documents an analytics workflow and is not clinical guidance.

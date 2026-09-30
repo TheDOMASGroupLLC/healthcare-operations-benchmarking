@@ -16,8 +16,10 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt
       - name: Compile Python
-        run: python -m compileall analysis
+        run: python -m compileall analysis sample_data/verify_sample.py
       - name: Import analysis modules
         env:
           PYTHONPATH: analysis
         run: python -c "import adapters, benchmark_metrics, incidents_preprocessing, loader, weight_preprocessing"
+      - name: Run synthetic sample
+        run: python sample_data/verify_sample.py
