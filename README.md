@@ -95,12 +95,11 @@ Outputs are written to:
 data/processed/
 ```
 
-## Case study materials
+## Case study
 
-Supporting materials are available in `case-study/`:
+The full project case study is available on The DOMAS Group website:
 
-- `Healthcare_Operations_Benchmarking_One_Page_Summary.pdf`
-- `Healthcare_Operations_Benchmarking_Case_Study.pdf`
+[Healthcare Operations Benchmarking](https://thedomasgroup.com/case-studies/healthcare-operations-benchmarking)
 
 ## Notes
 
