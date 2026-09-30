@@ -1,7 +1,9 @@
 # Data
 
-Raw resident-level data are intentionally not included in this public portfolio repository.
+Raw resident-level data are not included in this repository.
 
-To run the analysis locally, place the source Excel workbook in `data/raw/`. The analysis expects workbook sheets named `Weight` and `Incidents` with the fields referenced by the preprocessing scripts.
+Place one source Excel workbook in `data/raw/`. The workbook must contain sheets named `Weight` and `Incidents`.
 
-Generated analysis outputs are written to `data/processed/` and are excluded from version control.
+Generated analysis files and import statistics are written to `data/processed/`.
+
+The `.gitignore` keeps raw workbooks and generated outputs out of version control while preserving the directory structure.
