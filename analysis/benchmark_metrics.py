@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import Any, Dict, Optional
+from typing import Optional
 
 import numpy as np
 import pandas as pd
@@ -338,18 +338,18 @@ def create_quarter_comparison_visuals(
         comparison_metrics["v3_true"] = _median_days_between_falls_by_community(comparison_data)
         pooled_metrics["v3_true"] = _median_days_between_falls_by_community(pooled_data)
 
-    # Plot configuration by analysis type and metric.
-    PARAMS: Dict[str, Dict[str, Dict[str, Any]]] = {
+    # Delta labels are shown only for changes large enough to aid review.
+    ANNOTATION_THRESHOLDS = {
         "weights": {
-            "v1":      {"target_top": 10.0, "target_bottom": 0.0,  "show_band": True,  "highlight_abs": 20.0},
-            "v2":      {"target_top": 10.0, "target_bottom": 0.0,  "show_band": True,  "highlight_abs": 20.0},
-            "v3_true": {"target_top": 30.0, "target_bottom": None, "show_band": False, "highlight_abs": 5.0},
-            "v4":      {"target_top": 50.0, "target_bottom": 0.0,  "show_band": True,  "highlight_abs": 0.0},
+            "v1": 20.0,
+            "v2": 20.0,
+            "v3_true": 5.0,
+            "v4": 10.0,
         },
         "incidents": {
-            "v1":      {"target_top": 20.0, "target_bottom": 0.0,  "show_band": True,  "highlight_abs": 20.0},
-            "v2":      {"target_top": 0.0, "target_bottom": 0.0,  "show_band": True,  "highlight_abs": 15.0},
-            "v3_true": {"target_top": 0.0, "target_bottom": None, "show_band": False, "highlight_abs": 0.0},
+            "v1": 20.0,
+            "v2": 15.0,
+            "v3_true": 5.0,
         },
     }
 
@@ -395,15 +395,9 @@ def create_quarter_comparison_visuals(
         if key not in TITLES.get(kind, {}) or key not in IS_PERCENT.get(kind, {}):
             continue
 
-        params = PARAMS.get(kind, {}).get(
-            key,
-            {"target_top": None, "target_bottom": None,
-             "show_band": False, "highlight_abs": 0.0},
-        )
+        highlight_threshold = ANNOTATION_THRESHOLDS.get(kind, {}).get(key, 0.0)
 
         out_path = out_dir / f"{fname_stub}_{timestamp}_{qA}_vs_{qB}.png"
-
-        top_override = None
 
         combined_metric_bars_and_delta(
             baseline_metrics[key],
@@ -413,15 +407,10 @@ def create_quarter_comparison_visuals(
             out_path,
             metric_name=TITLES[kind][key],
             is_percent_metric=IS_PERCENT[kind][key],
-            sort_by_abs=True,
-            target_top=params["target_top"],
-            target_bottom=params["target_bottom"],
-            show_band=params["show_band"],
-            highlight_abs_threshold=params["highlight_abs"],
+            highlight_abs_threshold=highlight_threshold,
             show_top_median=True,
             show_bottom_median=True,
             overall_series_for_top_median=pooled_metrics[key],
-            top_median_override=top_override,
         )
 
     print(f"Wrote quarter comparison charts: {out_dir}")
@@ -434,15 +423,9 @@ def combined_metric_bars_and_delta(
     *,
     metric_name: str,
     is_percent_metric: bool,
-    sort_by_abs: bool = True,
-    target_top: float = None,
-    target_bottom: float = None,
-    show_band: bool = True,
     highlight_abs_threshold: float = 20.0,
     show_top_median: bool = True,
     show_bottom_median: bool = True,
-    top_median_override: Optional[float] = None,
-    bottom_median_override: Optional[float] = None,
     overall_series_for_top_median: Optional[pd.Series] = None,
 ):
 
@@ -484,25 +467,16 @@ def combined_metric_bars_and_delta(
     
         
     if show_top_median and len(idx):
-        if top_median_override is not None and np.isfinite(top_median_override):
-            m_top = float(top_median_override)
-        elif overall_series_for_top_median is not None:
-
+        if overall_series_for_top_median is not None:
             pooled = overall_series_for_top_median.reindex(idx)
             m_top = float(np.nanmedian(pooled.dropna().values)) if pooled.notna().any() else np.nan
         else:
-
             valid_top = pd.concat([baseline_values, comparison_values]).dropna()
             m_top = float(np.nanmedian(valid_top.values)) if len(valid_top) else np.nan
 
         if np.isfinite(m_top):
             ax_top.axhline(m_top, color="gray", linestyle="--", linewidth=1.2, alpha=0.9)
             _label_right_of_hline(ax_top, m_top, f"Median = {m_top:.1f}{y_label_top}", color="gray")
-        
-    if target_top is not None and np.isfinite(target_top):
-        ax_top.axhline(target_top, color="red", linestyle="--", linewidth=1.2, alpha=0.85)
-        _label_right_of_hline(ax_top, target_top, f"Target = {target_top:.1f}{y_label_top}", color="red")
-
 
     dvals = delta_values.values.astype(float)
     nanmask = ~np.isfinite(dvals)
@@ -516,19 +490,13 @@ def combined_metric_bars_and_delta(
     xpos = np.arange(len(idx))
     ax_bot.bar(xpos, plot_vals, color=colors)
 
-    if target_bottom is not None and np.isfinite(target_bottom):
-        ax_bot.axhline(target_bottom, color="red", linestyle="--", linewidth=1.2, alpha=0.85)
-        if show_band:
-            ax_bot.axhspan(target_bottom - highlight_abs_threshold,
-                        target_bottom + highlight_abs_threshold,
-                        color="lightgray", alpha=0.2, zorder=0)
-        _label_right_of_hline(ax_bot, target_bottom, f"Target = {target_bottom:.1f}{y_label_top}", color="red")
-    
+    ax_bot.axhline(0.0, color="gray", linewidth=0.8, alpha=0.6)
+
     for xi, val, is_na in zip(xpos, plot_vals, nanmask):
         if is_na:
             ax_bot.text(xi, 0, "NA", ha="center", va="bottom", fontsize=7, color="gray")
             continue
-        thresh_ref = target_bottom if (target_bottom is not None and np.isfinite(target_bottom)) else 0.0
+        thresh_ref = 0.0
         if np.isfinite(val) and abs(val - thresh_ref) >= highlight_abs_threshold:
             ax_bot.text(
                 xi, val, f"{val:+.0f}%" if is_percent_metric else f"{val:+.0f}",
@@ -536,11 +504,8 @@ def combined_metric_bars_and_delta(
             )
 
     if show_bottom_median:
-        if bottom_median_override is not None and np.isfinite(bottom_median_override):
-            m_delta = float(bottom_median_override)
-        else:
-            valid_bottom = delta_values[~delta_values.isna()].astype(float)
-            m_delta = float(np.nanmedian(valid_bottom.values)) if not valid_bottom.empty else np.nan
+        valid_bottom = delta_values[~delta_values.isna()].astype(float)
+        m_delta = float(np.nanmedian(valid_bottom.values)) if not valid_bottom.empty else np.nan
 
         if np.isfinite(m_delta):
             ax_bot.axhline(m_delta, color="gray", linestyle="--", linewidth=1.2, alpha=0.9)
