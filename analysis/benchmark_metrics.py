@@ -274,6 +274,35 @@ def _pct_residents_with_repeat_fall_30d(df):
     return pct
 
 
+def _median_days_between_falls_by_community(df: pd.DataFrame) -> pd.Series:
+    """Calculate each community's median resident-level interval between falls."""
+    if "is_fall" not in df.columns:
+        return pd.Series(dtype="float64")
+
+    falls = df[df["is_fall"]].copy()
+    if falls.empty:
+        return pd.Series(dtype="float64")
+
+    if "fall_date_diff" in falls.columns:
+        falls["_fall_gap_days"] = pd.to_numeric(falls["fall_date_diff"], errors="coerce")
+    else:
+        falls = falls.sort_values(["community", "resident_id", "dates_recorded"])
+        falls["_fall_gap_days"] = (
+            falls.groupby(["community", "resident_id"], observed=True)["dates_recorded"]
+                 .diff()
+                 .dt.days
+        )
+
+    resident_medians = (
+        falls.dropna(subset=["_fall_gap_days"])
+             .groupby(["community", "resident_id"], observed=True)["_fall_gap_days"]
+             .median()
+    )
+    result = resident_medians.groupby(level=0).median()
+    result.name = "median_days_between_falls"
+    return result.astype(float)
+
+
 def create_quarter_comparison_visuals(
     df_all: pd.DataFrame,
     qA: str,
@@ -300,12 +329,14 @@ def create_quarter_comparison_visuals(
     pooled_metrics = _compute_benchmark_series(pooled_data)
 
     kind = "incidents" if "incident" in str(out_dir).lower() else "weights"
-    global_incidents_metrics: dict[str, float] = {}
-
     if kind == "incidents" and "is_fall" in baseline_data.columns:
         baseline_metrics["v1"] = _pct_residents_with_repeat_fall_30d(baseline_data)
         comparison_metrics["v1"] = _pct_residents_with_repeat_fall_30d(comparison_data)
         pooled_metrics["v1"] = _pct_residents_with_repeat_fall_30d(pooled_data)
+
+        baseline_metrics["v3_true"] = _median_days_between_falls_by_community(baseline_data)
+        comparison_metrics["v3_true"] = _median_days_between_falls_by_community(comparison_data)
+        pooled_metrics["v3_true"] = _median_days_between_falls_by_community(pooled_data)
 
     # Plot configuration by analysis type and metric.
     PARAMS: Dict[str, Dict[str, Dict[str, Any]]] = {
@@ -331,8 +362,8 @@ def create_quarter_comparison_visuals(
         },
         "incidents": {
             "v1": "% Residents with Repeat Fall <30 Days by Community",
-            "v2": "Incidents per 100 Residents by Community",
-            "v3_true": "Median Days Between Incidents by Community",
+            "v2": "Falls per 100 Residents by Community",
+            "v3_true": "Median Days Between Falls by Community",
 
         },
     }
@@ -372,18 +403,7 @@ def create_quarter_comparison_visuals(
 
         out_path = out_dir / f"{fname_stub}_{timestamp}_{qA}_vs_{qB}.png"
 
-        # Incident reference medians for the benchmark overlay.
-        if kind == "incidents":
-            if key == "v1":
-                top_override = 44.5
-            elif key == "v2":
-                top_override = 222.0
-            elif key == "v3_true":
-                top_override = 22.2
-            else:
-                top_override = None
-        else:
-            top_override = None
+        top_override = None
 
         combined_metric_bars_and_delta(
             baseline_metrics[key],
