@@ -121,7 +121,7 @@ def analysis_prep(df):
     df = (df
           .sort_values(["resident_id", "dates_recorded"], ascending=[True, False])
           .assign(date_only=lambda d: d["dates_recorded"].dt.date)
-          .drop_duplicates(subset=["resident_id", "date_only"], keep="last")
+          .drop_duplicates(subset=["resident_id", "date_only"], keep="first")
           .drop(columns="date_only")
           .reset_index(drop=True)
           .query("70 <= weight_lbs <= 450"))
@@ -131,8 +131,8 @@ def analysis_prep(df):
     df["percent_change"] = df.groupby("resident_id")["weight_lbs"].pct_change() * 100.0
     df["date_diff"] = df.groupby("resident_id")["dates_recorded"].diff().dt.days
 
-    df = add_threshold_within_window(df, max_days=40, threshold_pct=5.0, prefix="30d", add_max_abs_30d=True)
-    df = add_threshold_within_window(df, max_days=200, threshold_pct=10.0, prefix="180d")
+    df = add_threshold_within_window(df, max_days=30, threshold_pct=5.0, prefix="30d", add_max_abs_30d=True)
+    df = add_threshold_within_window(df, max_days=180, threshold_pct=10.0, prefix="180d")
 
     df = apply_min_gap(df, "days_30d_thresh", "pct_30d_thresh", min_gap=7)
     df = apply_min_gap(df, "days_180d_thresh", "pct_180d_thresh", min_gap=7)
