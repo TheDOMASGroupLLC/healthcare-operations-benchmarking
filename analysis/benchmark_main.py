@@ -41,17 +41,17 @@ def validate_incident_metrics(df_std: pd.DataFrame, out_dir: Path, timestamp: st
 
         valid_fall_gaps = falls.dropna(subset=["fall_date_diff"]).copy()
 
-        gap_by_resident = (valid_fall_gaps
-                           .groupby("resident_id")["fall_date_diff"]
-                           .min())
+        gap_by_resident = (
+            valid_fall_gaps.groupby("resident_id")["fall_date_diff"].min()
+        )
 
-        fallers = gap_by_resident.index  # residents with ≥1 fall (with a computable gap)
-        repeat_residents = gap_by_resident[gap_by_resident <= 30].index
+        faller_count = falls["resident_id"].nunique()
+        repeat_faller_count = int((gap_by_resident <= 30).sum())
 
-        fallers_with_events = len(fallers)
-        repeat_faller_count = len(repeat_residents)
-
-        repeat_fall_pct = (repeat_faller_count / fallers_with_events * 100.0) if fallers_with_events > 0 else np.nan
+        repeat_fall_pct = (
+            repeat_faller_count / faller_count * 100.0
+            if faller_count > 0 else np.nan
+        )
 
         falls_per_100 = (total_falls / unique_residents * 100.0) if unique_residents > 0 else np.nan
 
