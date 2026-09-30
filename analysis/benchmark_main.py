@@ -90,6 +90,17 @@ def run_block(df_std: pd.DataFrame, label: str, ts: str):
     (PROCESSED_DIR / f"{label.lower()}_weekly_rates_{ts}.csv").write_text(weekly.to_csv(index=False))
     quarterly = df_std.assign(quarter=df_std["dates_recorded"].dt.to_period("Q").astype(str))
     quarters = sorted(quarterly["quarter"].dropna().unique())
+
+    create_benchmark_summary_and_visuals(
+        weights_df=df_std,
+        out_dir=PROCESSED_DIR / "benchmarks" / label.lower(),
+        timestamp=ts,
+        timeframe_label=""
+    )
+
+    if label.lower() == "incidents":
+        validate_incident_metrics(df_std, PROCESSED_DIR, ts)
+
     if len(quarters) >= 2:
         cmp_cols = ["community", "resident_id", "date_diff", "is_event", "quarter"]
 
@@ -98,23 +109,12 @@ def run_block(df_std: pd.DataFrame, label: str, ts: str):
         if "fall_date_diff" in quarterly.columns:
             cmp_cols.append("fall_date_diff")
 
-        create_benchmark_summary_and_visuals(
-            weights_df=df_std,
-            out_dir=PROCESSED_DIR / "benchmarks" / label.lower(),
-            timestamp=ts,
-            timeframe_label=""
-        )
-
         comparison_df = quarterly[cmp_cols]
-
-        if label.lower() == "incidents":
-            out_dir = PROCESSED_DIR
-            out_dir.mkdir(parents=True, exist_ok=True)
-            validate_incident_metrics(df_std, out_dir, ts)
+        qA, qB = quarters[-2], quarters[-1]
 
         create_quarter_comparison_visuals(
-            df_all=comparison_df, qA=quarters[0], qB=quarters[1],
-            out_dir=PROCESSED_DIR / "benchmarks" / f"{label}_comparisons",
+            df_all=comparison_df, qA=qA, qB=qB,
+            out_dir=PROCESSED_DIR / "benchmarks" / f"{label.lower()}_comparisons",
             timestamp=ts
         )
 
