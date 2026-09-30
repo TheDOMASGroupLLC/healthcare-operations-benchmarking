@@ -6,7 +6,7 @@ import pandas as pd
 
 from adapters import incidents_to_benchmark, weights_to_benchmark
 from config import PROCESSED_DIR
-from loader import all_sheets
+from loader import load_source_workbook
 from benchmark_metrics import (
     community_snapshot,
     weekly_event_rates,
@@ -123,8 +123,9 @@ def run_block(df_std: pd.DataFrame, label: str, ts: str):
 def main():
     ts = datetime.now().strftime("%Y%m%d_%H%M%S")
     PROCESSED_DIR.mkdir(parents=True, exist_ok=True)
-    weight_data = weights_to_benchmark(all_sheets["Weight"])
-    incident_data = incidents_to_benchmark(all_sheets["Incidents"])
+    source_sheets = load_source_workbook()
+    weight_data = weights_to_benchmark(source_sheets["Weight"])
+    incident_data = incidents_to_benchmark(source_sheets["Incidents"])
     run_block(weight_data, "Weights", ts)
     run_block(incident_data, "Incidents", ts)
     combined_data = pd.concat([weight_data, incident_data], ignore_index=True)
