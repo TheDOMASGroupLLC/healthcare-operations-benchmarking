@@ -91,4 +91,6 @@ Supporting materials are available in `case-study/`:
 
 ## Notes
 
+The runnable pipeline implements the weight and fall benchmark measures described above. The accompanying case study also discusses exploratory analytic extensions that are not part of the public pipeline.
+
 No raw resident-level or personally identifiable data are included. This repository documents an analytics workflow and is not clinical guidance.
